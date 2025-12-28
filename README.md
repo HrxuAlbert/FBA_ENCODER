@@ -183,9 +183,10 @@ python3 training/train_crse.py \
 
 ## 📖 Documentation
 
+- **[Quick Start Tutorial](docs/QUICKSTART.md)**: Step-by-step beginner's guide
 - **[Training Guide](docs/TRAINING_GUIDE.md)**: Detailed training instructions
 - **[Data Preparation Guide](docs/DATA_PREPARATION.md)**: How to prepare training data
-- **[Quick Start Tutorial](docs/QUICKSTART.md)**: Step-by-step beginner's guide
+- **[Dataset Specification](docs/DATASET.md)**: Complete dataset format and requirements
 
 ---
 
