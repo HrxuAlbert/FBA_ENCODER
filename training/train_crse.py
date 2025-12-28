@@ -4,8 +4,8 @@
 CRSE (Certified Robust Semantic Encoder) Training Script
 
 Supports two training profiles:
-1. local_mini: Local training on Mac/CPU (MPS, small batch, quick iteration)
-2. gpu_full: Full training on GPU (large batch, full dataset)
+1. local_mini: Local training on Mac/CPU (MPS/CPU, small batch, quick iteration)
+2. gpu_full: GPU training with CUDA (large batch, full dataset)
 
 Training strategy:
 ==================

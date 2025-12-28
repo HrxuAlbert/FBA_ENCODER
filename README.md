@@ -9,7 +9,7 @@
 - **Byzantine-Robust**: Trained to separate honest paraphrases from subtle semantic attacks
 - **Contrastive Learning**: Uses InfoNCE loss to push apart adversarial samples
 - **E5-Base Backbone**: Built on `intfloat/e5-base-v2` with projection head
-- **Flexible Training**: Supports local (Mac/CPU) and GPU (CUDA/Colab) training profiles
+- **Flexible Training**: Supports local (Mac/CPU) and GPU (CUDA) training profiles
 
 ---
 
@@ -71,7 +71,7 @@ python3 training/train_crse.py \
   --output-dir checkpoints/crse_local
 ```
 
-#### GPU Training (CUDA/Colab)
+#### GPU Training (CUDA)
 
 ```bash
 python3 training/train_crse.py \
@@ -166,7 +166,7 @@ CRSE uses **anchor-centered contrastive learning**:
 | Profile      | Device    | Batch Groups | Epochs | Projection Dim | Use Case                |
 |--------------|-----------|--------------|--------|----------------|-------------------------|
 | `local_mini` | MPS/CPU   | 8            | 5      | 256            | Quick local testing     |
-| `gpu_full`   | CUDA      | 32           | 10     | 512            | Full training (Colab)   |
+| `gpu_full`   | CUDA      | 32           | 10     | 512            | Full GPU training       |
 
 Customize with command-line arguments:
 
@@ -227,10 +227,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you use CRSE in your research, please cite:
 
 ```bibtex
-@misc{crse2024,
+@misc{crse2025,
   author = {Xu, Haoran},
   title = {CRSE: Certified Robust Semantic Encoder},
-  year = {2024},
+  year = {2025},
   publisher = {GitHub},
   url = {https://github.com/HrxuAlbert/FBA_ENCODER}
 }

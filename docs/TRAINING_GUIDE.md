@@ -117,7 +117,7 @@ python3 training/train_crse.py \
 
 ### Profile: `gpu_full`
 
-**For:** Full training on GPU (Colab, AWS, etc.)
+**For:** Full training on GPU (local CUDA machine or cloud)
 
 ```bash
 python3 training/train_crse.py \

@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# GPU Training Script (Colab / CUDA)
+# GPU Training Script (CUDA)
 
 # Example: Train on full dataset with gpu_full profile
 # Usage: bash scripts/train_gpu.sh path/to/data.jsonl

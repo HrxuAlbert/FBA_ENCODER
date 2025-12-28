@@ -133,7 +133,7 @@ Separation: 0.4667
 For production-quality models, train on a larger dataset with GPU:
 
 ```bash
-# On Google Colab or a machine with CUDA
+# On a machine with CUDA GPU
 python3 training/train_crse.py \
   --profile gpu_full \
   --data data/crse/full_dataset.jsonl \
