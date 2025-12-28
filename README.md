@@ -1,0 +1,246 @@
+# CRSE: Certified Robust Semantic Encoder
+
+**CRSE** (Certified Robust Semantic Encoder) is a contrastively trained text encoder designed to resist Byzantine semantic attacks while maintaining high similarity for honest paraphrases.
+
+---
+
+## 🎯 Key Features
+
+- **Byzantine-Robust**: Trained to separate honest paraphrases from subtle semantic attacks
+- **Contrastive Learning**: Uses InfoNCE loss to push apart adversarial samples
+- **E5-Base Backbone**: Built on `intfloat/e5-base-v2` with projection head
+- **Flexible Training**: Supports local (Mac/CPU) and GPU (CUDA/Colab) training profiles
+
+---
+
+## 📦 Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/HrxuAlbert/FBA_ENCODER.git
+cd FBA_ENCODER
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+**Requirements:**
+- Python 3.8+
+- PyTorch 2.0+
+- Transformers 4.30+
+
+---
+
+## 🚀 Quick Start
+
+### 1. Prepare Your Data
+
+CRSE training requires a JSONL dataset where each line is an "anchor group":
+
+```json
+{
+  "anchor": {"text": "Original paragraph...", "source_id": "id1"},
+  "positives": [
+    {"text": "Faithful paraphrase...", "id": "id1_P1"}
+  ],
+  "byzantine": [
+    {"text": "Semantic attack...", "id": "id1_B1", "attack_type": "B1_POLARITY_FLIP", "budget": "mild"}
+  ],
+  "stats": {"n_positives": 1, "n_byzantine": 12}
+}
+```
+
+Use `data_preparation/build_dataset.py` to construct this from separate files:
+
+```bash
+python3 data_preparation/build_dataset.py \
+  --anchors path/to/source.jsonl \
+  --paraphrases path/to/paraphrases.jsonl \
+  --attacks path/to/attacks.jsonl \
+  --output data/crse/dataset.jsonl
+```
+
+### 2. Train the Model
+
+#### Local Training (Mac/CPU)
+
+```bash
+python3 training/train_crse.py \
+  --profile local_mini \
+  --data data/crse/dataset.jsonl \
+  --output-dir checkpoints/crse_local
+```
+
+#### GPU Training (CUDA/Colab)
+
+```bash
+python3 training/train_crse.py \
+  --profile gpu_full \
+  --data data/crse/dataset.jsonl \
+  --output-dir checkpoints/crse_gpu \
+  --batch-groups 32 \
+  --epochs 10
+```
+
+### 3. Use the Trained Model
+
+```python
+import torch
+from crse.model import CRSEModel
+
+# Load model
+model = CRSEModel(projection_dim=512)
+model.load_state_dict(torch.load("checkpoints/crse_gpu/best_model.pt"))
+model.eval()
+
+# Encode texts
+texts = ["This is a test.", "Another sentence."]
+embeddings = model.encode(texts, normalize=True)
+
+print(embeddings.shape)  # (2, 512)
+```
+
+---
+
+## 📂 Repository Structure
+
+```
+FBA_ENCODER/
+├── crse/                      # CRSE model core
+│   ├── __init__.py
+│   ├── model.py               # CRSEModel definition
+│   └── config.py              # Training configurations
+│
+├── training/                  # Training scripts
+│   ├── train_crse.py          # Main training script
+│   ├── dataset.py             # Dataset loader
+│   ├── loss.py                # Contrastive loss
+│   └── evaluation.py          # Geometry evaluation
+│
+├── data_preparation/          # Data preprocessing tools
+│   └── build_dataset.py       # Build CRSE dataset
+│
+├── scripts/                   # Helper scripts
+│   ├── train_local.sh         # Local training script
+│   └── train_gpu.sh           # GPU training script
+│
+├── docs/                      # Documentation
+│   ├── TRAINING_GUIDE.md      # Detailed training guide
+│   ├── DATA_PREPARATION.md    # Data preparation guide
+│   └── QUICKSTART.md          # Quick start tutorial
+│
+├── README.md                  # This file
+├── requirements.txt           # Python dependencies
+├── LICENSE                    # MIT License
+└── .gitignore                 # Git ignore rules
+```
+
+---
+
+## 🔬 Training Strategy
+
+CRSE uses **anchor-centered contrastive learning**:
+
+1. **Anchor groups**: Each training sample consists of:
+   - 1 anchor text (original)
+   - N positives (faithful paraphrases)
+   - M negatives (Byzantine attacks)
+
+2. **Contrastive loss**: InfoNCE loss that:
+   - Pulls anchor and honest paraphrases together (high cosine similarity)
+   - Pushes anchor and Byzantine attacks apart (low cosine similarity)
+
+3. **Byzantine attacks**: Four attack types with three intensity levels:
+   - `B1_POLARITY_FLIP`: Reverse factual claims
+   - `B2_EVIDENCE_OMISSION`: Remove caveats/limitations
+   - `B3_FAKE_CAUSALITY`: Introduce false causal links
+   - `B4_ON_TOPIC_HALLUCINATION`: Add plausible but false details
+   - Budgets: `mild`, `medium`, `strong`
+
+4. **Evaluation metric**: Separation = cos(anchor, para) - cos(anchor, byz)
+
+---
+
+## 📊 Training Profiles
+
+| Profile      | Device    | Batch Groups | Epochs | Projection Dim | Use Case                |
+|--------------|-----------|--------------|--------|----------------|-------------------------|
+| `local_mini` | MPS/CPU   | 8            | 5      | 256            | Quick local testing     |
+| `gpu_full`   | CUDA      | 32           | 10     | 512            | Full training (Colab)   |
+
+Customize with command-line arguments:
+
+```bash
+python3 training/train_crse.py \
+  --profile gpu_full \
+  --data data/crse/dataset.jsonl \
+  --batch-groups 64 \
+  --epochs 15 \
+  --lr 1e-5
+```
+
+---
+
+## 📖 Documentation
+
+- **[Training Guide](docs/TRAINING_GUIDE.md)**: Detailed training instructions
+- **[Data Preparation Guide](docs/DATA_PREPARATION.md)**: How to prepare training data
+- **[Quick Start Tutorial](docs/QUICKSTART.md)**: Step-by-step beginner's guide
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📧 Contact
+
+**Author**: Haoran Xu  
+**Email**: 2614067X@student.gla.ac.uk  
+**Institution**: University of Glasgow  
+**GitHub**: [@HrxuAlbert](https://github.com/HrxuAlbert)
+
+---
+
+## 🔗 Related Projects
+
+- **RAP-BFT**: Byzantine Fault-Tolerant consensus using CRSE  
+  https://github.com/HrxuAlbert/RAP-BFT
+
+---
+
+## ⭐ Citation
+
+If you use CRSE in your research, please cite:
+
+```bibtex
+@misc{crse2024,
+  author = {Xu, Haoran},
+  title = {CRSE: Certified Robust Semantic Encoder},
+  year = {2024},
+  publisher = {GitHub},
+  url = {https://github.com/HrxuAlbert/FBA_ENCODER}
+}
+```
+
+---
+
+## 🙏 Acknowledgments
+
+- Built on [E5-base-v2](https://huggingface.co/intfloat/e5-base-v2)
+- Inspired by contrastive learning literature in NLP
+- Byzantine attack taxonomy designed for distributed consensus systems
+
