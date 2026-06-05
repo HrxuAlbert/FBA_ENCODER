@@ -1,15 +1,30 @@
-# CRSE: Certified Robust Semantic Encoder
+# CRSE / FBA Encoder
 
-**CRSE** (Certified Robust Semantic Encoder) is a contrastively trained text encoder designed to resist Byzantine semantic attacks while maintaining high similarity for honest paraphrases.
+**CRSE / FBA Encoder** is a robust semantic encoder designed for Byzantine-resilient multi-agent agreement. It aims to map semantically consistent honest proposals close to each other while separating adversarial or semantically poisoned proposals in the embedding space.
 
----
+This repository supports my broader research on **trustworthy multi-agent AI systems**, **semantic commitment**, and **Byzantine-resilient collaboration**, where multiple agents may submit natural-language or structured proposals under disagreement, uncertainty, or adversarial manipulation.
 
-## 🎯 Key Features
+## Motivation
 
-- **Byzantine-Robust**: Trained to separate honest paraphrases from subtle semantic attacks
-- **Contrastive Learning**: Uses InfoNCE loss to push apart adversarial samples
-- **E5-Base Backbone**: Built on `intfloat/e5-base-v2` with projection head
-- **Flexible Training**: Supports local (Mac/CPU) and GPU (CUDA) training profiles
+Modern multi-agent AI systems increasingly rely on natural-language proposals, explanations, and evidence-grounded judgments. However, standard semantic encoders may fail to distinguish between honest semantic variations and Byzantine semantic attacks, such as polarity flips, misleading evidence use, hallucinated causal relations, or adversarially shifted claims.
+
+This project explores contrastive training strategies for improving semantic separation between honest and Byzantine proposals, with the goal of supporting downstream mechanisms such as fuzzy Byzantine agreement, certified semantic commitment, and selective commitment in LLM-agent collaboration.
+
+## Key Features
+
+* Transformer-based semantic encoding for proposal-level representation.
+* Contrastive learning for honest-honest alignment and honest-Byzantine separation.
+* Support for semantic attack patterns such as polarity flip, semantic shift, and misleading claim transformation.
+* Designed as a research module for Byzantine-resilient semantic agreement and trustworthy multi-agent AI systems.
+
+## Research Context
+
+This repository is part of a broader research agenda on protocol-level trust mechanisms for multi-agent AI collaboration, including:
+
+* Byzantine-resilient semantic agreement;
+* semantic robustness under adversarial disagreement;
+* evidence-aware and certificate-based commitment;
+* selective commitment and safe-abort mechanisms for LLM-agent systems.
 
 ---
 
